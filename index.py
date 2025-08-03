@@ -89,25 +89,17 @@ class WelcomeWindow(QWidget):
 
 def main():
     app = QApplication([])
-
-    # 1. gif 디렉토리 경로
     base_dir = os.path.dirname(os.path.abspath(sys.argv[0]))
     gif_dir = os.path.join(base_dir, "gif")
-
-    # 2. gif 폴더가 없으면 자동 생성
     if not os.path.exists(gif_dir):
         os.makedirs(gif_dir)
         QMessageBox.information(None, "안내", f"gif 폴더가 생성되었습니다!\n\n{gif_dir}\n여기에 이미지 파일을 넣고 실행해 주세요.")
         if sys.platform.startswith("win"):
             os.startfile(gif_dir)
         sys.exit(0)
-
-    # 3. 환영 인트로 창
     welcome = WelcomeWindow()
     welcome.show()
     app.exec_()
-
-    # 4. 지원하는 모든 확장자 리스트
     exts = [".gif", ".jpg", ".jpeg", ".png", ".webp"]
     img_files = [f for f in os.listdir(gif_dir) if os.path.splitext(f)[1].lower() in exts]
     if not img_files:
@@ -115,23 +107,17 @@ def main():
         if sys.platform.startswith("win"):
             os.startfile(gif_dir)
         sys.exit(0)
-
-    # 5. 파일 선택
     selected, ok = QInputDialog.getItem(None, "이미지 선택", "실행할 이미지를 고르세요:", img_files, 0, False)
     if not ok or not selected:
         QMessageBox.information(None, "알림", "실행이 취소되었습니다.")
         sys.exit(0)
-
     img_path = os.path.join(gif_dir, selected)
-
-    # 6. 메인 이미지 창 생성/실행
     label = DraggableResizableLabel()
     label.setWindowFlags(Qt.FramelessWindowHint | Qt.WindowStaysOnTopHint | Qt.Tool)
     label.setAttribute(Qt.WA_TranslucentBackground)
     label.setStyleSheet("background: transparent;")
-    label.setImage(img_path)  # 확장자 자동 분기
+    label.setImage(img_path)
     label.show()
-
     sys.exit(app.exec_())
 
 if __name__ == "__main__":
